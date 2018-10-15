@@ -120,7 +120,7 @@ private  void Save(){
     mySP.setfloatharedPref("log", (float) 120.1404220000); // 经度
 
 
-  Toast.makeText(this,"保存成功",Toast.LENGTH_LONG).show();
+  Toast.makeText(this,"保存成功!",Toast.LENGTH_LONG).show();
 
 
 }
