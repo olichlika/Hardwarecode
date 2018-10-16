@@ -1,8 +1,19 @@
 package com.lixin.hardwarecode;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lixin.hardwarecode.Utis.Mnt;
@@ -11,17 +22,73 @@ import com.lixin.hardwarecode.Utis.SharedPref;
 import java.io.File;
 import java.io.RandomAccessFile;
 
+import com.lixin.hardwarecode.Tools.RandomDevice;
+
 public class MainActivity extends Activity  {
+
+    private TextView tv1;
+    private TextView tv2;
+    private EditText imeitx;
+    private Button btnSave;
+
+    private TelephonyManager Phone;
+
+    final int MY_PERMIEAD_CONTACTS = 1;
+
+//    public static void main(String[] args){
+//        String imei = RandomDevice.makeRandomIMEI();
+//
+//        System.out.println("imei:" + imei);
+//    }
 
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        //实例化控件
+        tv1 = (TextView)findViewById(R.id.tv1);
+        tv2 = (TextView)findViewById(R.id.tv2);
+        imeitx = (EditText)findViewById(R.id.imei_et);
+        btnSave = (Button)findViewById(R.id.btn_Save);
 
-            Save();
-            CPU();
+        Phone = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);//获取系统信息
 
+        // 点击按钮，将数据保存到SharedPreference中
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveData();//点击保存sp键值对数据
+            }
+        });
+
+        //获取权限状态
+        int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE);
+        //判断权限是否开启
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMIEAD_CONTACTS);
+        } else {
+            //设置显示文本的数据
+            tv1.setText("IMEI:" + Phone.getDeviceId());
+            tv2.setText("IMSI:" + Phone.getSubscriberId());
+        }
+//            Save();
+//            CPU();
+
+    }
+
+
+    private void saveData() {
+        try {
+            //sp键值对保存，文本框里数据
+            SharedPreferences sh = this.getSharedPreferences("sPref", 1);
+            SharedPreferences.Editor sPre = sh.edit();
+            sPre.putString("imei", imeitx.getText().toString());//把文本框的值存入
+            sPre.commit();
+            Toast.makeText(MainActivity.this, "修改成功!", Toast.LENGTH_SHORT).show();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
 

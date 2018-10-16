@@ -26,5 +26,14 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.1'
     testCompile 'junit:junit:4.12'
-    provided files('libs/XposedBridgeApi-54.jar')
+//    provided files('libs/XposedBridgeApi-54.jar')
 }
+
+repositories {
+    jcenter();
+}
+
+dependencies {
+    provided 'de.robv.android.xposed:api:82'
+}
+
